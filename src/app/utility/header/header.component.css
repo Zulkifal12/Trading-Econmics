@@ -1,0 +1,9 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+.loader {
+  position: fixed !important;
+  z-index: 99;
+  background-color: rgb(140, 193, 82) !important;
+  width: 100%;
+}
