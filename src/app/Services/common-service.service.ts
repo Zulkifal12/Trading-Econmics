@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { apikey, domainName } from 'src/app/Constatns/app-helper';
+import { apikey, apikey2, domainName } from 'src/app/Constatns/app-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -37,23 +37,23 @@ export class CommonServiceService {
     );
   }
   getInflation() {
-    return this.http.get(`${domainName}?function=INFLATION&apikey=${apikey}`);
+    return this.http.get(`${domainName}?function=INFLATION&apikey=${apikey2}`);
   }
   getRetailSales() {
     return this.http.get(
-      `${domainName}?function=RETAIL_SALES&apikey=${apikey}`
+      `${domainName}?function=RETAIL_SALES&apikey=${apikey2}`
     );
   }
 
   getUnemployment() {
     return this.http.get(
-      `${domainName}?function=UNEMPLOYMENT&apikey=${apikey}`
+      `${domainName}?function=UNEMPLOYMENT&apikey=${apikey2}`
     );
   }
 
   getNonFarmPayroll() {
     return this.http.get(
-      `${domainName}?function=NONFARM_PAYROLL&apikey=${apikey}`
+      `${domainName}?function=NONFARM_PAYROLL&apikey=${apikey2}`
     );
   }
 }

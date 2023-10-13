@@ -75,15 +75,12 @@ export class TableComponent implements OnInit {
   }
   intervalChange() {
     if (this.selectedOption == 'treasuryYield') {
-      console.log('treasuryYield', this.selectedIntervalTreasury);
       this.getTreasuryYield();
     }
     if (this.selectedOption == 'federalFundsRate') {
-      console.log('treasuryYield', this.selectedIntervalFfr);
-      // this.getFederalFundsRate();
+      this.getFederalFundsRate();
     }
     if (this.selectedOption == 'CPI') {
-      console.log('treasuryYield', this.selectedCPI);
       this.getCPi();
     }
   }
@@ -211,7 +208,6 @@ export class TableComponent implements OnInit {
             data.value = data.value / 12;
             return data;
           });
-          console.log('Data', data);
           if (this.myChart) this.myChart.destroy();
           if (this.mybarChart) this.mybarChart.destroy();
           this.renderBarChart(

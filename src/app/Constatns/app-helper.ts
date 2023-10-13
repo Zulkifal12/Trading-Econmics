@@ -1,6 +1,6 @@
 export const domainName = 'https://www.alphavantage.co/query';
 export const apikey = '4IJ00H97QFO4GD48';
-// export const apikey = 'demo';
+export const apikey2 = 'MY3NTZUSAT4HVNCT';
 
 export const fakedata = [
   { date: '2023-08-01', value: '4.17' },
