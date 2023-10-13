@@ -27,13 +27,14 @@ export class TableComponent implements OnInit {
   selectedIntervalFfr: string = 'monthly';
   selectedCPI: string = 'monthly';
   myChart!: any;
+  mybarChart!: any;
 
   constructor(private common_service: CommonServiceService) {
     this.getRealGDP();
   }
   ngOnInit(): void {}
   renderBarChart(unit: string, data: any) {
-    this.myChart = new Chart('tx_plan_stats', {
+    this.mybarChart = new Chart('tx_plan_stats', {
       type: 'bar',
       data: {
         labels: data.map((x: any) => x.date),
@@ -73,7 +74,6 @@ export class TableComponent implements OnInit {
     return date.getFullYear().toString();
   }
   intervalChange() {
-    this.getRealGDP();
     if (this.selectedOption == 'treasuryYield') {
       console.log('treasuryYield', this.selectedIntervalTreasury);
       this.getTreasuryYield();
@@ -87,64 +87,6 @@ export class TableComponent implements OnInit {
       this.getCPi();
     }
   }
-
-  maturityChange() {
-    if (this.selectedOption == 'treasuryYield') {
-      console.log('treasuryYield', this.selectedMaturityTreasury);
-      // this.getTreasuryYield();
-    }
-  }
-
-  getRealGDP() {
-    this.common_service
-      .getRealGDP(this.selectedInterval)
-      .subscribe((data: any) => {
-        if (data) {
-          this.gdps = [];
-          this.gdps = data.data;
-          this.renderBarChart(data.unit, data.data.reverse());
-          this.renderLineChart(data.unit, data.data);
-        }
-      });
-  }
-
-  getRealGDPperCapita() {
-    this.common_service.getRealGDPperCapita().subscribe((data: any) => {
-      if (data) {
-        this.gdps = [];
-        this.gdps = data.data;
-        const modifiedData = this.convertToYearlyData(data.data);
-        this.renderBarChart('Millions', modifiedData);
-        this.renderLineChart('Millions', data.data.reverse());
-      }
-    });
-  }
-
-  convertToYearlyData(data: any) {
-    const yearlyData = [];
-    const yearToValueMap: any = {};
-
-    for (const entry of data) {
-      const dateParts = entry.date.split('-');
-      const year = parseInt(dateParts[0]);
-      const value = parseFloat(entry.value);
-
-      if (yearToValueMap[year]) {
-        yearToValueMap[year] += value;
-      } else {
-        yearToValueMap[year] = value;
-      }
-    }
-
-    for (const year in yearToValueMap) {
-      if (yearToValueMap.hasOwnProperty(year)) {
-        yearlyData.push({ date: year, value: yearToValueMap[year].toString() });
-      }
-    }
-
-    return yearlyData;
-  }
-
   selectOption(option: string) {
     this.selectedOption = option;
     if (this.selectedOption == 'realGDP') {
@@ -202,20 +144,84 @@ export class TableComponent implements OnInit {
       this.nonFormPayroll = false;
     }
   }
-  getTreasuryYield() {
-    this.myChart.destroy();
+
+  getRealGDP() {
     this.common_service
-      .getTreasuryYield(
-        this.selectedIntervalTreasury,
-        this.selectedMaturityTreasury
-      )
+      .getRealGDP(this.selectedInterval)
+      .subscribe((data: any) => {
+        if (data) {
+          this.gdps = [];
+          this.gdps = data.data;
+          if (this.myChart) this.myChart.destroy();
+          if (this.mybarChart) this.mybarChart.destroy();
+          this.renderBarChart(data.unit, data.data.reverse());
+          this.renderLineChart(data.unit, data.data);
+        }
+      });
+  }
+
+  getRealGDPperCapita() {
+    this.common_service.getRealGDPperCapita().subscribe((data: any) => {
+      if (data) {
+        this.gdps = [];
+        this.gdps = data.data;
+        const modifiedData = this.convertToYearlyData(data.data);
+        if (this.myChart) this.myChart.destroy();
+        if (this.mybarChart) this.mybarChart.destroy();
+        this.renderBarChart('Millions', modifiedData);
+        this.renderLineChart('Millions', data.data.reverse());
+      }
+    });
+  }
+
+  convertToYearlyData(data: any) {
+    const yearlyData = [];
+    const yearToValueMap: any = {};
+
+    for (const entry of data) {
+      const dateParts = entry.date.split('-');
+      const year = parseInt(dateParts[0]);
+      const value = parseFloat(entry.value);
+
+      if (yearToValueMap[year]) {
+        yearToValueMap[year] += value;
+      } else {
+        yearToValueMap[year] = value;
+      }
+    }
+
+    for (const year in yearToValueMap) {
+      if (yearToValueMap.hasOwnProperty(year)) {
+        yearlyData.push({ date: year, value: yearToValueMap[year].toString() });
+      }
+    }
+
+    return yearlyData;
+  }
+
+  getTreasuryYield() {
+    this.common_service
+      .getTreasuryYield(this.selectedIntervalTreasury)
       .subscribe((data: any) => {
         if (data) {
           this.gdps = [];
           this.gdps = data.data;
           const modifiedData = this.convertToYearlyData(data.data);
-          this.renderBarChart(data.unit, modifiedData);
-          this.renderLineChart(data.unit, modifiedData);
+          const average_modifiedData = modifiedData.map((data) => {
+            data.value = data.value / 12;
+            return data;
+          });
+          console.log('Data', data);
+          if (this.myChart) this.myChart.destroy();
+          if (this.mybarChart) this.mybarChart.destroy();
+          this.renderBarChart(
+            data.unit + ' ' + 'per/year',
+            average_modifiedData
+          );
+          this.renderLineChart(
+            data.unit + ' ' + 'per/year',
+            average_modifiedData
+          );
         }
       });
   }
@@ -228,6 +234,8 @@ export class TableComponent implements OnInit {
           this.gdps = [];
           this.gdps = data.data;
           const modifiedData = this.convertToYearlyData(data.data);
+          if (this.myChart) this.myChart.destroy();
+          if (this.mybarChart) this.mybarChart.destroy();
           this.renderBarChart(data.unit, modifiedData);
           this.renderLineChart(data.unit, modifiedData);
         }
@@ -240,6 +248,8 @@ export class TableComponent implements OnInit {
         this.gdps = [];
         this.gdps = data.data;
         const modifiedData = this.convertToYearlyData(data.data);
+        if (this.myChart) this.myChart.destroy();
+        if (this.mybarChart) this.mybarChart.destroy();
         this.renderBarChart(data.unit, modifiedData);
         this.renderLineChart(data.unit, modifiedData);
       }
@@ -252,6 +262,8 @@ export class TableComponent implements OnInit {
         this.gdps = [];
         this.gdps = data.data;
         const modifiedData = this.convertToYearlyData(data.data);
+        if (this.myChart) this.myChart.destroy();
+        if (this.mybarChart) this.mybarChart.destroy();
         this.renderBarChart(data.unit, modifiedData);
         this.renderLineChart(data.unit, modifiedData);
       }
@@ -264,6 +276,8 @@ export class TableComponent implements OnInit {
         this.gdps = [];
         this.gdps = data.data;
         const modifiedData = this.convertToYearlyData(data.data);
+        if (this.myChart) this.myChart.destroy();
+        if (this.mybarChart) this.mybarChart.destroy();
         this.renderBarChart(data.unit, modifiedData);
         this.renderLineChart(data.unit, modifiedData);
       }
@@ -278,7 +292,8 @@ export class TableComponent implements OnInit {
         modifiedData.map((data: any) => {
           data.value = data.value / 12;
         });
-        console.log('modifiedData', modifiedData);
+        if (this.myChart) this.myChart.destroy();
+        if (this.mybarChart) this.mybarChart.destroy();
         this.renderBarChart(data.unit + '/Year', modifiedData);
         this.renderLineChart(data.unit + '/Year', modifiedData);
       }
@@ -291,6 +306,8 @@ export class TableComponent implements OnInit {
         this.gdps = [];
         this.gdps = data.data;
         const modifiedData = this.convertToYearlyData(data.data);
+        if (this.myChart) this.myChart.destroy();
+        if (this.mybarChart) this.mybarChart.destroy();
         this.renderBarChart(data.unit, modifiedData);
         this.renderLineChart(data.unit, modifiedData);
       }

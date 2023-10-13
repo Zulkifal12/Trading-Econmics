@@ -20,9 +20,9 @@ export class CommonServiceService {
     );
   }
 
-  getTreasuryYield(interval: string, maturity: string) {
+  getTreasuryYield(interval: string) {
     return this.http.get(
-      `${domainName}?function=TREASURY_YIELD&interval=${interval}&maturity=${maturity}&apikey=${apikey}`
+      `${domainName}?function=TREASURY_YIELD&interval=${interval}&maturity=10&apikey=${apikey}`
     );
   }
 
