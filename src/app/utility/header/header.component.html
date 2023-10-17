@@ -1,5 +1,15 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav
+  class="navbar navbar-expand-lg d-flex justify-content-between navbar-light bg-light"
+>
   <a class="navbar-brand ms-sm-4" href="#">Trading Economics</a>
+  <div class="no-network d-flex justify-content-between" *ngIf="isConnected">
+    <p class="my-auto mx-sm-3">No Internet Connection!</p>
+    <img
+      src="../../../assets/network.jpg"
+      alt="Net Connection Lost"
+      class="mx-sm-5 network_image"
+    />
+  </div>
 </nav>
 <div *ngIf="loaderService.isLoading | async" class="loader">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>

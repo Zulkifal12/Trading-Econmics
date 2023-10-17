@@ -7,3 +7,15 @@
   background-color: rgb(140, 193, 82) !important;
   width: 100%;
 }
+
+.network_image {
+  width: 30px;
+  height: 30px;
+}
+
+.no-network {
+  color: white;
+  font-size: 20px;
+  background-color: rgba(214, 167, 47, 0.831);
+  border-radius: 10px 0px 0px 10px;
+}
