@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -26,6 +26,7 @@ import {
 } from '@angular/material/radio';
 import { Routes } from '@angular/router';
 import { InterceptorService } from './loader/interceptor.service';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 const routes: Routes = [
   {
@@ -56,6 +57,12 @@ const routes: Routes = [
     MatRadioModule,
     MatButtonModule,
     MatProgressBarModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 10 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:10000',
+    }),
   ],
   providers: [
     {
