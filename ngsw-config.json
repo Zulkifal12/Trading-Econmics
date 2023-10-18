@@ -30,11 +30,11 @@
   "dataGroups": [
     {
       "name": "API's-data",
-      "urls": ["https://**.{{_DOMAIN}}/**"],
+      "urls": ["https://www.alphavantage.co/**"],
       "cacheConfig": {
         "strategy": "freshness",
         "maxSize": 20,
-        "maxAge": "7d",
+        "maxAge": "14d",
         "timeout": "3s"
       }
     }
